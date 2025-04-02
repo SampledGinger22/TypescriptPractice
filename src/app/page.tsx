@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import AdvocateDTO from "./api/dto/AdvocateDTO";
 
 export default function Home() {
-  const [advocates, setAdvocates] = useState([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState([]);
+  const [advocates, setAdvocates] = useState<AdvocateDTO[]>([]);
+  const [filteredAdvocates, setFilteredAdvocates] = useState<AdvocateDTO[]>([]);
 
   useEffect(() => {
     console.log("fetching advocates...");
@@ -16,20 +17,23 @@ export default function Home() {
     });
   }, []);
 
-  const onChange = (e) => {
-    const searchTerm = e.target.value;
+  const onChange = (e: any) => {
+    const searchTerm: string = e.target.value.toLowerCase();
 
-    document.getElementById("search-term").innerHTML = searchTerm;
+    let searchTermById = document.getElementById("search-term");
+    if (searchTermById) {
+      searchTermById.innerHTML = searchTerm;
+    }
 
     console.log("filtering advocates...");
     const filteredAdvocates = advocates.filter((advocate) => {
       return (
-        advocate.firstName.includes(searchTerm) ||
-        advocate.lastName.includes(searchTerm) ||
-        advocate.city.includes(searchTerm) ||
-        advocate.degree.includes(searchTerm) ||
-        advocate.specialties.includes(searchTerm) ||
-        advocate.yearsOfExperience.includes(searchTerm)
+        advocate.firstName?.toLowerCase().includes(searchTerm) ||
+        advocate.lastName?.toLowerCase().includes(searchTerm) ||
+        advocate.city?.toLowerCase().includes(searchTerm) ||
+        advocate.degree?.toLowerCase().includes(searchTerm) ||
+        advocate.specialties?.some((specialty) => specialty.toLowerCase().includes(searchTerm)) ||
+        advocate.yearsOfExperience?.toString().includes(searchTerm)
       );
     });
 
@@ -37,7 +41,7 @@ export default function Home() {
   };
 
   const onClick = () => {
-    console.log(advocates);
+    console.log(JSON.stringify(advocates));
     setFilteredAdvocates(advocates);
   };
 
@@ -70,17 +74,17 @@ export default function Home() {
           {filteredAdvocates.map((advocate) => {
             return (
               <tr>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
+                <td>{advocate.firstName ?? null}</td>
+                <td>{advocate.lastName ?? null}</td>
+                <td>{advocate.city ?? null}</td>
+                <td>{advocate.degree ?? null}</td>
                 <td>
-                  {advocate.specialties.map((s) => (
-                    <div>{s}</div>
-                  ))}
+                  {advocate.specialties && advocate.specialties.length > 0 ? (
+                    advocate.specialties.map((s) => <div>{s}</div>)
+                  ) : null}
                 </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
+                <td>{advocate.yearsOfExperience ?? null}</td>
+                <td>{advocate.phoneNumber ?? null}</td>
               </tr>
             );
           })}
