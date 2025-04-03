@@ -1,6 +1,3 @@
-import internal from "stream";
-
-
 export default class AdvocateDTO {
    firstName?: string;
    lastName?: string;
